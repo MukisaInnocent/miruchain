@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings - MIRUCHAIN</title>
+
+    <!-- Design System -->
+    <link rel="stylesheet" href="css/design-system.css">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: var(--bg-secondary);
+            position: relative;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('images/profile_settings_bg.png') center/cover no-repeat;
+            opacity: 0.25;
+            z-index: -1;
+        }
+
+        /* Layout Container */
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.closed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #818cf8;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sidebar-nav {
+            padding: 0 1rem;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.4);
+            padding: 0 0.75rem 0.75rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            border-radius: 0.75rem;
+            transition: all 0.2s;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link:hover {
+            background: rgba(129, 140, 248, 0.15);
+            color: #a5b4fc;
+            transform: translateX(4px);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.125rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        /* Mobile Toggle */
+        .sidebar-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .dashboard-header {
+            background: var(--bg-primary);
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-toggle {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Toggle -->
+    <button class="sidebar-toggle" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="sidebar-logo">
+                    <i class="fa-solid fa-link"></i>
+                    <span>MIRUCHAIN</span>
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="dashboard.html" class="nav-link">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="transactions.html" class="nav-link">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>Transactions</span>
+                    </a>
+                    <a href="referrals.html" class="nav-link">
+                        <i class="fa-solid fa-users"></i>
+                        <span>My Referrals</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Business</div>
+                    <a href="links.html" class="nav-link">
+                        <i class="fa-solid fa-link"></i>
+                        <span>Business Links</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="profile.html" class="nav-link active">
+                        <i class="fa-solid fa-user-circle"></i>
+                        <span>Profile</span>
+                    </a>
+                    <a href="admin.html" class="nav-link">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Admin Panel</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <a href="#" onclick="api.logout(); return false;" class="nav-link" style="color: #f87171;">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+
+            <section class="dashboard-header">
+                <div class="container" style="max-width: 800px;">
+                    <h1 class="h2 mb-xs"><i class="fa-solid fa-user-gear text-primary mr-sm"></i> Profile Settings</h1>
+                    <p class="text-secondary">Manage your account information, security, and preferences</p>
+                </div>
+            </section>
+
+            <div class="container pb-xl" style="max-width: 800px;">
+                <!-- Alert Container -->
+                <div id="alertContainer"></div>
+
+                <!-- Account Information -->
+                <div class="card mb-lg">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fa-solid fa-id-card text-info mr-sm"></i> Account Status</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid grid-2 gap-md">
+                            <div class="bg-tertiary p-md rounded-lg flex justify-between items-center">
+                                <span class="text-secondary font-medium"><i class="fa-solid fa-code mr-xs"></i> Referral
+                                    Code</span>
+                                <strong id="referralCode"
+                                    class="font-mono text-primary bg-white px-xs py-xxs rounded border border-color">Loading...</strong>
+                            </div>
+
+                            <div class="bg-tertiary p-md rounded-lg flex justify-between items-center">
+                                <span class="text-secondary font-medium"><i class="fa-solid fa-toggle-on mr-xs"></i>
+                                    Account
+                                    Status</span>
+                                <span id="accountStatus">Loading...</span>
+                            </div>
+
+                            <div class="bg-tertiary p-md rounded-lg flex justify-between items-center">
+                                <span class="text-secondary font-medium"><i class="fa-solid fa-crown mr-xs"></i>
+                                    Membership</span>
+                                <span id="membershipStatus">Loading...</span>
+                            </div>
+
+                            <div class="bg-tertiary p-md rounded-lg flex justify-between items-center">
+                                <span class="text-secondary font-medium"><i class="fa-solid fa-calendar mr-xs"></i>
+                                    Member
+                                    Since</span>
+                                <strong id="memberSince">Loading...</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Information -->
+                <div class="card mb-lg">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fa-solid fa-pen-to-square text-primary mr-sm"></i> Personal
+                            Information
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="profileForm" onsubmit="event.preventDefault(); updateProfile();">
+                            <div class="grid grid-2 gap-md">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" id="fullName" class="form-input" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" id="phoneNumber" class="form-input">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <div class="input-group relative">
+                                    <i
+                                        class="fa-solid fa-lock absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary opacity-50"></i>
+                                    <input type="email" id="email" class="form-input bg-tertiary cursor-not-allowed"
+                                        readonly title="Email cannot be changed">
+                                </div>
+                                <p class="text-xs text-secondary mt-xs">Email address cannot be changed for security
+                                    reasons.
+                                </p>
+                            </div>
+
+                            <div class="flex justify-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-save mr-xs"></i> Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Change Password -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fa-solid fa-shield-halved text-primary mr-sm"></i> Security
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="passwordForm" onsubmit="event.preventDefault(); updatePassword();">
+                            <div class="form-group">
+                                <label class="form-label">Current Password</label>
+                                <input type="password" id="currentPassword" class="form-input" required>
+                            </div>
+
+                            <div class="grid grid-2 gap-md">
+                                <div class="form-group">
+                                    <label class="form-label">New Password</label>
+                                    <input type="password" id="newPassword" class="form-input" required minlength="8">
+                                    <p class="text-xs text-secondary mt-xs">Minimum 8 characters</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Confirm New Password</label>
+                                    <input type="password" id="confirmPassword" class="form-input" required>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end mt-md">
+                                <button type="submit" class="btn btn-secondary">
+                                    <i class="fa-solid fa-key mr-xs"></i> Update Password
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scripts -->
+            <script src="js/api.js"></script>
+            <script src="js/theme.js"></script>
+            <script>
+                // Require authentication
+                requireAuth();
+
+                let currentProfile = {};
+
+                async function loadProfile() {
+                    try {
+                        const response = await api.getProfile();
+                        currentProfile = response.data;
+                        populateForm(currentProfile);
+                    } catch (error) {
+                        miruchain.showNotification('Failed to load profile', 'error');
+                    }
+                }
+
+                function populateForm(data) {
+                    document.getElementById('fullName').value = data.full_name;
+                    document.getElementById('email').value = data.email;
+                    document.getElementById('phoneNumber').value = data.phone_number || '';
+
+                    document.getElementById('referralCode').textContent = data.referral_code;
+                    document.getElementById('accountStatus').innerHTML = data.is_active
+                        ? '<span class="badge badge-success"><i class="fa-solid fa-check mr-xs"></i> Active</span>'
+                        : '<span class="badge badge-secondary">Inactive</span>';
+                    document.getElementById('membershipStatus').innerHTML = data.membership_paid
+                        ? '<span class="badge badge-success"><i class="fa-solid fa-check mr-xs"></i> Paid</span>'
+                        : '<span class="badge badge-warning"><i class="fa-solid fa-triangle-exclamation mr-xs"></i> Unpaid</span>';
+                    document.getElementById('memberSince').textContent = new Date(data.joined_at).toLocaleDateString();
+                }
+
+                async function updateProfile() {
+                    const submitBtn = document.querySelector('#profileForm button[type="submit"]');
+                    miruchain.showLoading(submitBtn);
+
+                    const data = {
+                        full_name: document.getElementById('fullName').value,
+                        phone_number: document.getElementById('phoneNumber').value
+                    };
+
+                    try {
+                        await api.updateProfile(data);
+                        miruchain.showNotification('Profile updated successfully!', 'success');
+                        loadProfile();
+                    } catch (error) {
+                        miruchain.showNotification(error.message || 'Failed to update profile', 'error');
+                    } finally {
+                        miruchain.hideLoading(submitBtn);
+                    }
+                }
+
+                async function updatePassword() {
+                    const currentPassword = document.getElementById('currentPassword').value;
+                    const newPassword = document.getElementById('newPassword').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+
+                    if (newPassword !== confirmPassword) {
+                        miruchain.showNotification('New passwords do not match', 'error');
+                        return;
+                    }
+
+                    if (newPassword.length < 8) {
+                        miruchain.showNotification('Password must be at least 8 characters', 'error');
+                        return;
+                    }
+
+                    const submitBtn = document.querySelector('#passwordForm button[type="submit"]');
+                    miruchain.showLoading(submitBtn);
+
+                    try {
+                        await api.changePassword(currentPassword, newPassword);
+                        miruchain.showNotification('Password updated successfully!', 'success');
+                        document.getElementById('passwordForm').reset();
+                    } catch (error) {
+                        miruchain.showNotification(error.message || 'Failed to update password', 'error');
+                    } finally {
+                        miruchain.hideLoading(submitBtn);
+                    }
+                }
+
+                // Load profile on page load
+                loadProfile();
+
+                // Toggle sidebar for mobile
+                function toggleSidebar() {
+                    const sidebar = document.getElementById('sidebar');
+                    sidebar.classList.toggle('open');
+                }
+            </script>
+        </main>
+    </div>
+</body>
+
+</html>

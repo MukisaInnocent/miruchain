@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Referrals - MIRUCHAIN</title>
+
+    <!-- Design System -->
+    <link rel="stylesheet" href="css/design-system.css">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: var(--bg-secondary);
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('images/business_links_bg.png') center/cover no-repeat;
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .dashboard-header {
+            background: var(--bg-primary);
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar"
+        style="background: var(--bg-elevated); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 100;">
+        <div class="navbar-container container">
+            <a href="/" class="navbar-brand" style="font-weight: 800; font-size: 1.5rem; color: var(--primary);">
+                <i class="fa-solid fa-layer-group"></i> MIRUCHAIN
+            </a>
+            <ul class="navbar-menu">
+                <li><a href="dashboard.html" class="navbar-link active" style="color: var(--primary);"><i
+                            class="fa-solid fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="links.html" class="navbar-link"><i class="fa-solid fa-link"></i> Business Links</a></li>
+                <li><a href="transactions.html" class="navbar-link"><i class="fa-solid fa-clock-rotate-left"></i>
+                        Transactions</a></li>
+                <li><a href="profile.html" class="navbar-link"><i class="fa-solid fa-user-circle"></i> Profile</a></li>
+                <li><a href="#" onclick="api.logout()" class="navbar-link" style="color: var(--error);"><i
+                            class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="dashboard-header">
+        <div class="container">
+            <h1 class="h2 mb-xs"><i class="fa-solid fa-users text-secondary mr-sm"></i> My Referrals</h1>
+            <p class="text-secondary">Track your network growth and commission earnings</p>
+        </div>
+    </section>
+
+    <div class="container pb-xl">
+        <!-- Stats -->
+        <div class="grid grid-3 gap-md mb-lg">
+            <div class="card p-lg flex items-center gap-md">
+                <div class="w-12 h-12 rounded-full bg-primary-bg text-primary flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+                <div>
+                    <div class="text-secondary text-sm font-semibold">Total Referrals</div>
+                    <div class="text-2xl font-bold" id="totalReferrals">0</div>
+                </div>
+            </div>
+
+            <div class="card p-lg flex items-center gap-md">
+                <div class="w-12 h-12 rounded-full bg-success-bg text-success flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-user-check"></i>
+                </div>
+                <div>
+                    <div class="text-secondary text-sm font-semibold">Active Referrals</div>
+                    <div class="text-2xl font-bold" id="activeReferrals">0</div>
+                </div>
+            </div>
+
+            <div class="card p-lg flex items-center gap-md">
+                <div class="w-12 h-12 rounded-full bg-warning-bg text-warning flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-sack-dollar"></i>
+                </div>
+                <div>
+                    <div class="text-secondary text-sm font-semibold">Total Commission</div>
+                    <div class="text-2xl font-bold text-success" id="totalCommission">$0.00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Referrals Table -->
+        <div class="card">
+            <div class="card-header flex justify-between items-center">
+                <h3 class="card-title">Referral List</h3>
+                <div class="flex gap-sm">
+                    <input type="text" id="searchReferral" class="form-input py-xs" placeholder="Search referrals..."
+                        onkeyup="filterReferrals()">
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Joined Date</th>
+                            <th>Status</th>
+                            <th>Commission Earned</th>
+                        </tr>
+                    </thead>
+                    <tbody id="referralsTable">
+                        <tr>
+                            <td colspan="5" class="text-center p-xl text-secondary">Loading referrals...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/theme.js"></script>
+    <script>
+        // Require authentication
+        requireAuth();
+
+        let allReferrals = [];
+
+        async function loadReferrals() {
+            try {
+                // Get dashboard data for stats
+                const dashboardData = await api.getDashboard();
+                updateStats(dashboardData.data);
+
+                // Get referrals list
+                const response = await api.getDirectReferrals();
+                allReferrals = response.data.referrals || [];
+                displayReferrals(allReferrals);
+            } catch (error) {
+                console.error('Error loading referrals:', error);
+                document.getElementById('referralsTable').innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center p-xl text-error">
+                            <i class="fa-solid fa-circle-exclamation mb-sm"></i><br>
+                            Failed to load referrals
+                        </td>
+                    </tr>`;
+            }
+        }
+
+        function updateStats(data) {
+            document.getElementById('totalReferrals').textContent = data.total_referrals;
+            document.getElementById('activeReferrals').textContent = data.active_referrals;
+
+            // Calculate total commission if available, otherwise sum from referrals list later
+            if (data.earnings_breakdown) {
+                const total = parseFloat(data.earnings_breakdown.direct_referral_commissions || 0) +
+                    parseFloat(data.earnings_breakdown.upline_referral_commissions || 0);
+                document.getElementById('totalCommission').textContent = '$' + total.toFixed(2);
+            }
+        }
+
+        function displayReferrals(referrals) {
+            const tbody = document.getElementById('referralsTable');
+
+            if (referrals.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center p-xl">
+                            <div class="flex flex-col items-center justify-center text-secondary">
+                                <i class="fa-solid fa-users-slash fa-3x mb-md opacity-50"></i>
+                                <p>No referrals yet. Share your link to start earning!</p>
+                                <a href="dashboard.html" class="btn btn-primary btn-sm mt-md">Get Referral Link</a>
+                            </div>
+                        </td>
+                    </tr>`;
+                return;
+            }
+
+            tbody.innerHTML = referrals.map(ref => `
+                <tr>
+                    <td class="font-medium">
+                        <div class="flex items-center gap-sm">
+                            <div class="w-8 h-8 rounded-full bg-tertiary flex items-center justify-center">
+                                <i class="fa-solid fa-user text-secondary"></i>
+                            </div>
+                            ${ref.full_name}
+                        </div>
+                    </td>
+                    <td>${ref.email}</td>
+                    <td class="text-sm text-secondary">${new Date(ref.joined_at).toLocaleDateString()}</td>
+                    <td>
+                        <span class="badge ${ref.is_active ? 'badge-success' : 'badge-secondary'}">
+                            ${ref.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td class="font-bold text-success">+$${parseFloat(ref.commission_earned).toFixed(2)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function filterReferrals() {
+            const query = document.getElementById('searchReferral').value.toLowerCase();
+
+            const filtered = allReferrals.filter(ref =>
+                ref.full_name.toLowerCase().includes(query) ||
+                ref.email.toLowerCase().includes(query)
+            );
+
+            displayReferrals(filtered);
+        }
+
+        // Initial load
+        loadReferrals();
+    </script>
+</body>
+
+</html>

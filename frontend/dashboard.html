@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MIRUCHAIN</title>
+
+    <!-- Design System -->
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/modern-components.css">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: #0f172a;
+            position: relative;
+        }
+
+        /* Modern Dashboard Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('images/dashboard_modern_bg.png') center/cover no-repeat;
+            opacity: 0.4;
+            z-index: 0;
+        }
+
+        .dashboard-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Modern Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #818cf8;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #818cf8;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem 2rem;
+        }
+
+        .welcome-section {
+            margin-bottom: 3rem;
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #f1f5f9;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-subtitle {
+            color: #94a3b8;
+            font-size: 1.125rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(129, 140, 248, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(129, 140, 248, 0.3);
+            box-shadow: 0 12px 40px rgba(129, 140, 248, 0.15);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+        }
+
+        .stat-icon.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+        }
+
+        .stat-icon.primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+        }
+
+        .stat-icon.secondary {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            color: white;
+            box-shadow: 0 8px 24px rgba(236, 72, 153, 0.3);
+        }
+
+        .stat-icon.info {
+            background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+            color: white;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        .stat-badge {
+            padding: 0.375rem 0.75rem;
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #f1f5f9;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.9375rem;
+            font-weight: 500;
+        }
+
+        /* Content Section */
+        .dashboard-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            padding: 2rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .referral-box {
+            background: rgba(99, 102, 241, 0.1);
+            border: 2px dashed rgba(129, 140, 248, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .referral-link {
+            flex: 1;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9375rem;
+            color: #a5b4fc;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .action-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #f1f5f9;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(129, 140, 248, 0.3);
+            transform: translateX(4px);
+        }
+
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        .action-text h4 {
+            margin: 0 0 0.25rem 0;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .action-text p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="logo">
+                    <i class="fa-solid fa-link"></i> MIRUCHAIN
+                </a>
+                <div class="nav-links hide-mobile">
+                    <a href="dashboard.html" class="nav-link active">
+                        <i class="fa-solid fa-chart-line"></i> Dashboard
+                    </a>
+                    <a href="links.html" class="nav-link">
+                        <i class="fa-solid fa-link"></i> Links
+                    </a>
+                    <a href="referrals.html" class="nav-link">
+                        <i class="fa-solid fa-share-nodes"></i> Referrals
+                    </a>
+                    <a href="transactions.html" class="nav-link">
+                        <i class="fa-solid fa-clock-rotate-left"></i> Transactions
+                    </a>
+                    <a href="profile.html" class="nav-link">
+                        <i class="fa-solid fa-user-circle"></i> Profile
+                    </a>
+                    <button class="nav-link" onclick="api.logout()"
+                        style="background: none; border: none; color: #f87171;">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </div>
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"
+                    style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 0.625rem; border-radius: 0.5rem; cursor: pointer;">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="welcome-section">
+                <h1 class="welcome-title animated-gradient-text">
+                    Welcome back, <span id="userName">Member</span>! 👋
+                </h1>
+                <p class="welcome-subtitle">Here's your performance overview</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card glass-card card-lift">
+                    <div class="stat-header">
+                        <div class="stat-icon success">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                        <span class="stat-badge">+2.5%</span>
+                    </div>
+                    <div class="stat-value" id="walletBalance">$0.00</div>
+                    <div class="stat-label">Available Balance</div>
+                </div>
+
+                <div class="stat-card glass-card card-lift">
+                    <div class="stat-header">
+                        <div class="stat-icon primary">
+                            <i class="fa-solid fa-sack-dollar"></i>
+                        </div>
+                        <span class="stat-badge"
+                            style="background: rgba(99, 102, 241, 0.15); color: #a5b4fc;">Total</span>
+                    </div>
+                    <div class="stat-value" id="totalEarnings">$0.00</div>
+                    <div class="stat-label">Total Earnings</div>
+                </div>
+
+                <div class="stat-card glass-card card-lift">
+                    <div class="stat-header">
+                        <div class="stat-icon secondary">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <span class="stat-badge"
+                            style="background: rgba(236, 72, 153, 0.15); color: #f472b6;">Active</span>
+                    </div>
+                    <div class="stat-value" id="totalReferrals">0</div>
+                    <div class="stat-label">Total Referrals</div>
+                </div>
+
+                <div class="stat-card glass-card card-lift">
+                    <div class="stat-header">
+                        <div class="stat-icon info">
+                            <i class="fa-solid fa-link"></i>
+                        </div>
+                        <span class="stat-badge"
+                            style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">Live</span>
+                    </div>
+                    <div class="stat-value" id="activeLinks">0</div>
+                    <div class="stat-label">Active Links</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <div class="content-grid">
+                <!-- Referral Link -->
+                <div class="card">
+                    <h3 class="card-title">
+                        <i class="fa-solid fa-share-nodes" style="color: #818cf8;"></i>
+                        Your Referral Link
+                    </h3>
+                    <div class="referral-box">
+                        <i class="fa-solid fa-link" style="color: #818cf8; font-size: 1.5rem;"></i>
+                        <div class="referral-link" id="referralLink">Loading...</div>
+                        <button class="copy-btn" onclick="copyReferralLink()">
+                            <i class="fa-solid fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <p style="color: #94a3b8; font-size: 0.875rem; margin: 0;">
+                        Share this link with your network to earn commissions on every signup and transaction.
+                    </p>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <h3 class="card-title">
+                        <i class="fa-solid fa-zap" style="color: #fbbf24;"></i>
+                        Quick Actions
+                    </h3>
+                    <div class="action-grid">
+                        <a href="links.html" class="action-btn">
+                            <div class="action-icon">
+                                <i class="fa-solid fa-link"></i>
+                            </div>
+                            <div class="action-text">
+                                <h4>Browse Links</h4>
+                                <p>Find businesses to share</p>
+                            </div>
+                        </a>
+                        <a href="referrals.html" class="action-btn">
+                            <div class="action-icon">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <div class="action-text">
+                                <h4>View Network</h4>
+                                <p>Track your referrals</p>
+                            </div>
+                        </a>
+                        <button class="action-btn" onclick="showWithdrawalInfo()"
+                            style="border: none; width: 100%; cursor: pointer;">
+                            <div class="action-icon">
+                                <i class="fa-solid fa-money-bill-transfer"></i>
+                            </div>
+                            <div class="action-text">
+                                <h4>Withdraw</h4>
+                                <p>Request payout</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- InnoTech Solutions Footer -->
+        <footer style="
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem 2rem 2rem;
+            margin-top: 4rem;
+        ">
+            <div style="
+                max-width: 1400px;
+                margin: 0 auto;
+                display: grid;
+                grid-template-columns: 2fr 1fr 1fr 1fr;
+                gap: 3rem;
+                margin-bottom: 2rem;
+            " class="footer-grid">
+                <div>
+                    <h3 style="
+                        font-size: 1.5rem;
+                        font-weight: 800;
+                        color: #818cf8;
+                        margin-bottom: 1rem;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                    ">
+                        <i class="fa-solid fa-link"></i> MIRUCHAIN
+                    </h3>
+                    <p style="color: #94a3b8; line-height: 1.6; margin-bottom: 1.5rem;">
+                        Building the future of referral marketing. Earn passive income by sharing business links.
+                    </p>
+                    <div style="
+                        padding: 1rem;
+                        background: rgba(99, 102, 241, 0.1);
+                        border-radius: 0.75rem;
+                        border-left: 4px solid #6366f1;
+                    ">
+                        <p style="font-size: 0.875rem; color: #cbd5e1; margin: 0 0 0.25rem 0;">
+                            <i class="fa-solid fa-code" style="color: #818cf8;"></i>
+                            <strong>Developed by:</strong>
+                            <a href="https://innotech-solutions.com" target="_blank" style="
+                                color: #818cf8;
+                                text-decoration: none;
+                                font-weight: 700;
+                                margin-left: 0.25rem;
+                            ">InnoTech Solutions</a>
+                        </p>
+                        <p style="font-size: 0.75rem; color: #64748b; margin: 0;">
+                            Professional Web & Software Development
+                        </p>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="font-weight: 700; margin-bottom: 1rem; color: #f1f5f9;">Platform</h4>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem;">
+                        <li><a href="dashboard.html" style="color: #94a3b8; text-decoration: none;">Dashboard</a></li>
+                        <li><a href="links.html" style="color: #94a3b8; text-decoration: none;">Business Links</a></li>
+                        <li><a href="referrals.html" style="color: #94a3b8; text-decoration: none;">Referrals</a></li>
+                        <li><a href="transactions.html" style="color: #94a3b8; text-decoration: none;">Transactions</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 style="font-weight: 700; margin-bottom: 1rem; color: #f1f5f9;">Company</h4>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem;">
+                        <li><a href="#" style="color: #94a3b8; text-decoration: none;">About Us</a></li>
+                        <li><a href="#" style="color: #94a3b8; text-decoration: none;">Contact</a></li>
+                        <li><a href="#" style="color: #94a3b8; text-decoration: none;">Privacy Policy</a></li>
+                        <li><a href="#" style="color: #94a3b8; text-decoration: none;">Terms</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 style="font-weight: 700; margin-bottom: 1rem; color: #f1f5f9;">Support</h4>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem;">
+                        <li><a href="#" style="color: #94a3b8; text-decoration: none;">Help Center</a></li>
+                        <li><a href="#" style="color: #94a3b8; text-decoration: none;">FAQs</a></li>
+                        <li><a href="#" style="color: #94a3b8; text-decoration: none;">Community</a></li>
+                        <li><a href="#" style="color: #94a3b8; text-decoration: none;">Contact Support</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="
+                max-width: 1400px;
+                margin: 0 auto;
+                padding-top: 2rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 1rem;
+            ">
+                <p style="color: #64748b; font-size: 0.875rem; margin: 0;">
+                    &copy; 2024 MIRUCHAIN. All rights reserved.
+                </p>
+                <p style="color: #64748b; font-size: 0.875rem; margin: 0;">
+                    <i class="fa-solid fa-heart" style="color: #f87171;"></i>
+                    Crafted with excellence by
+                    <a href="https://innotech-solutions.com" target="_blank" style="
+                        color: #818cf8;
+                        text-decoration: none;
+                        font-weight: 600;
+                    ">InnoTech Solutions</a>
+                </p>
+            </div>
+
+            <style>
+                @media (max-width: 968px) {
+                    .footer-grid {
+                        grid-template-columns: 1fr !important;
+                    }
+                }
+            </style>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/theme.js"></script>
+    <script>
+        // Check authentication
+        if (!isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                const data = await api.getDashboardStats();
+
+                // Update user name
+                const userData = JSON.parse(localStorage.getItem('user') || '{}');
+                document.getElementById('userName').textContent = userData.full_name?.split(' ')[0] || 'Member';
+
+                // Update stats
+                document.getElementById('walletBalance').textContent = '$' + (data.wallet_balance || 0).toFixed(2);
+                document.getElementById('totalEarnings').textContent = '$' + (data.total_earnings || 0).toFixed(2);
+                document.getElementById('totalReferrals').textContent = data.total_referrals || 0;
+                document.getElementById('activeLinks').textContent = data.active_links || 0;
+
+                // Update referral link
+                const referralCode = userData.referral_code || 'XXXXX';
+                const referralLink = `${window.location.origin}/register.html?ref=${referralCode}`;
+                document.getElementById('referralLink').textContent = referralLink;
+            } catch (error) {
+                console.error('Failed to load dashboard:', error);
+            }
+        }
+
+        // Copy referral link
+        function copyReferralLink() {
+            const link = document.getElementById('referralLink').textContent;
+            navigator.clipboard.writeText(link).then(() => {
+                const btn = event.target.closest('.copy-btn');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                }, 2000);
+            });
+        }
+
+        // Withdrawal info
+        function showWithdrawalInfo() {
+            alert('Withdrawal feature: Minimum $10. Contact support for withdrawal requests.');
+        }
+
+        // Load dashboard on page load
+        loadDashboard();
+    </script>
+</body>
+
+</html>
