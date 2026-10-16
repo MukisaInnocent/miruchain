@@ -6,6 +6,7 @@ __pycache__/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+backend/local.sqlite3
 media/
 staticfiles/
 
@@ -14,6 +15,7 @@ venv/
 env/
 ENV/
 .venv
+backend/.venv314/
 
 # Environment Variables
 .env

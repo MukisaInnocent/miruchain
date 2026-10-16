@@ -1,86 +1,24 @@
-# 🚀 Complete These 3 Steps to Start the Server
+# Local Windows Setup
 
-## Step 1: Configure PostgreSQL Password
+## Requirements
 
-1. **Edit the `.env` file** in the `backend` folder
-2. **Find this line**: `DB_PASSWORD=your_postgres_password_here`
-3. **Replace** `your_postgres_password_here` with your actual PostgreSQL password
-4. **Save** the file
+- Python 3.14 installed and available through the Windows `py` launcher
+- PowerShell
 
-Example:
-```
-DB_PASSWORD=myactualpassword123
-```
+## Start the site
 
-## Step 2: Create the Database
-
-You have 2 options:
-
-### Option A: Using pgAdmin (Easy - GUI)
-1. Open **pgAdmin 4**
-2. Connect to your PostgreSQL server
-3. Right-click on **"Databases"**
-4. Select **"Create" → "Database..."**
-5. Enter database name: **miruchain_db**
-6. Click **"Save"**
-
-### Option B: Using PowerShell (Command Line)
-1. Find your PostgreSQL bin folder (usually `C:\Program Files\PostgreSQL\<version>\bin`)
-2. Run this command (replace the path if needed):
-```powershell
-& "C:\Program Files\PostgreSQL\16\bin\psql.exe" -U postgres -c "CREATE DATABASE miruchain_db;"
-```
-
-## Step 3: Run the Server
-
-After completing steps 1 and 2, run these commands in PowerShell:
+From the repository root, run:
 
 ```powershell
-# Make sure you're in the backend folder
-cd backend
-
-# Make sure virtual environment is activated (you should see (venv) in prompt)
-# If not, run: .\venv\Scripts\activate
-
-# Run migrations (create database tables)
-python manage.py makemigrations
-python manage.py migrate
-
-# Create admin user
-python manage.py createsuperuser
-
-# Start the server
-python manage.py runserver
+.\run-local.ps1
 ```
 
-## ✅ Success!
+The first run creates `backend/.venv314`, installs the Python dependencies, and creates a local SQLite database at `backend/local.sqlite3`. It does not connect to or modify PostgreSQL. The frontend and API start at:
 
-When you see this message:
-```
-Starting development server at http://127.0.0.1:8000/
-```
+- Site: http://127.0.0.1:8080/index.html
+- API: http://127.0.0.1:8000/api/v1/
+- Admin: http://127.0.0.1:8000/admin/
 
-Your server is running! Open your browser and go to:
-- **API**: http://localhost:8000/api/v1/
-- **Admin Panel**: http://localhost:8000/admin
+Press Ctrl+C in the PowerShell window to stop both servers. To create a Django admin account, run `.\run-local.ps1 -CreateSuperuser` instead.
 
----
-
-## 🆘 Troubleshooting
-
-**Can't find psql.exe?**
-- Search for "psql.exe" in Windows search
-- Or check: `C:\Program Files\PostgreSQL\`
-- Use pgAdmin instead (Option A)
-
-**Password authentication failed?**
-- Check your `.env` file has the correct password
-- Make sure DB_USER is `postgres`
-
-**Migration errors?**
-- Make sure database `miruchain_db` exists
-- Check PostgreSQL is running
-
-**Need help?**
-- Check `QUICK_START.md` for detailed guide
-- Review error messages carefully
+The PostgreSQL settings remain the default for deployments; the local launcher overrides them only for its own process.
